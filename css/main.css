@@ -1,0 +1,22 @@
+body { margin: 0px; background-color: #ddd; color: white; }
+
+body a { color: #47f; text-decoration: none; }
+
+.fleft { float: left; }
+.fright { float: right; }
+
+.pw10 { width : 10%; }
+.pw25 { width: 25%; }
+.pw50 { width: 50%; }
+.pw75 { width: 75%; }
+.pw100 { width: 100%; }
+
+.clearfix:after { content: "."; display: block; clear: both; visibility: hidden; line-height: 0; height: 0; }
+/* .clearfix { display: inline-block; } */
+html[xmlns] .clearfix { display: block; }
+* html .clearfix { height: 1%; }
+
+#container { width : 1351px; margin: 0px auto; background-color: #333; padding: 20px; }
+
+#container #content #game { text-align: center; position: relative; width: 600px; height: 600px; }
+#container #content #game canvas { position: absolute; left: 0px; top: 0px; }

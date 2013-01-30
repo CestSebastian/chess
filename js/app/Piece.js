@@ -1,0 +1,3 @@
+function Piece (color, type) {
+    
+}
