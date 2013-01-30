@@ -16,7 +16,7 @@ body a { color: #47f; text-decoration: none; }
 html[xmlns] .clearfix { display: block; }
 * html .clearfix { height: 1%; }
 
-#container { width : 1351px; margin: 0px auto; background-color: #333; padding: 20px; }
+#container { width : 1351px; margin: 0px auto; background-color: #333; }
 
-#container #content #game { text-align: center; position: relative; width: 600px; height: 600px; }
-#container #content #game canvas { position: absolute; left: 0px; top: 0px; }
+#container #content #game { text-align: center; position: relative; height: 600px; }
+#container #content #game canvas { position: absolute; left: 100px; top: 0px; }
