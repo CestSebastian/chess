@@ -1,8 +1,8 @@
 function Chess (domRef) {
     var board       = new Rss.Grid(8, 8, 50, true, 'gray', domRef, 'board'),
-        piecesGrid  = new Rss.Grid(8, 8, 50, false, 'gray', domRef, 'pieces'),
-        piecesCtx   = piecesGrid.getRssCanvas().getContext2d(),
-        i, j,
+        boardCtx    = board.getRssCanvas().getContext2d(),
+        piecesGrid,
+        i, j, boardMatrix,
         self = this;
         
     for (i=0; i<8; i++) {
@@ -32,7 +32,7 @@ function Chess (domRef) {
                 
                 image.onload = (function (color, piece) {
                     return function() {
-                        patterns[color + '_' + piece] = piecesCtx.createPattern(this, 'repeat');
+                        patterns[color + '_' + piece] = boardCtx.createPattern(this, 'repeat');
                         loadedPieces++;
                         
                         if (loadedPieces == 12)
@@ -45,43 +45,88 @@ function Chess (domRef) {
         });
     }
     
-    this.initBoard = function () {
-        console.log(patterns)
-        var i, x, y, piece, pattern;
-        pieces = [];
-        players.forEach(function(color) {
-            for(piece in pieceTypes) {
-                if (piece === 'pawn') {
-                    y = (color === 'white' ? 6 : 1);
-                } else {
-                    y = (color === 'white' ? 7 : 0);
-                }
-                pattern = patterns[color + '_' + piece];
-                
-                for (i=0; i<pieceTypes[piece]; i++) {
-                    if (piece === 'rook') {
-                        x = (i === 0 ? 0 : 7);
-                    } else if (piece === 'knight') {
-                        x = (i === 0 ? 1 : 6);
-                    } else if (piece === 'bishop') {
-                        x = (i === 0 ? 2 : 5);
-                    } else if (piece === 'king') {
-                        x = (color === 'white' ? 3 : 4);
-                    } else if (piece === 'queen') {
-                        x = (color === 'white' ? 4 : 3);
-                    } else {
-                        x = i;
-                    }
-                    
-                    console.log(piece, x, y)
-                    pieces.push(new Piece(x, y, pattern, piecesGrid));
-                }
+    this.initBoard = function (inverted) {
+        if (boardMatrix) {
+            this.destroy();
+        }
+        
+        piecesGrid  = new Rss.Grid(8, 8, 50, false, 'gray', domRef, 'pieces');
+        
+        var i, x, piece, topColor, botColor, topKey, botKey;
+        
+        boardMatrix = new Array(8);
+        
+        for (i=0; i<8; i++) {
+            boardMatrix[i] = new Array(8);
+        }
+
+        topColor = (inverted ? 'white' : 'black');
+        botColor = (inverted ? 'black' : 'white');
+
+        // adding pawns
+        for (i=0; i<8; i++) {
+            piece = 'pawn';
+            topKey = topColor + '_' + piece;
+            botKey = botColor + '_' + piece;
+            
+            boardMatrix[i][1] = new Piece(topKey, i, 1, patterns[topKey], piecesGrid);
+            boardMatrix[i][6] = new Piece(botKey, i, 6, patterns[botKey], piecesGrid);
+        }
+        
+        
+        // rook, knight, bishop
+        ['rook', 'knight', 'bishop'].forEach(function(piece) {
+            var x1, x2;
+            if ('rook' === piece) {
+                x1 = 0;
+                x2 = 7;
+            } else if ('knight' === piece) {
+                x1 = 1;
+                x2 = 6;
+            } else if ('bishop' === piece) {
+                x1 = 2;
+                x2 = 5;
             }
+            
+            topKey = topColor + '_' + piece;
+            botKey = botColor + '_' + piece;
+
+            boardMatrix[x1][0] = new Piece(topKey, x1, 0, patterns[topKey], piecesGrid);
+            boardMatrix[x2][0] = new Piece(topKey, x2, 0, patterns[topKey], piecesGrid);
+            boardMatrix[x1][7] = new Piece(topKey, x1, 7, patterns[botKey], piecesGrid);
+            boardMatrix[x2][7] = new Piece(topKey, x2, 7, patterns[botKey], piecesGrid);
         });
+        
+        
+        // the queen
+        piece = 'queen';
+        topKey = topColor + '_' + piece;
+        botKey = botColor + '_' + piece;
+        
+        x = (inverted ? 4 : 3);
+        boardMatrix[x][0] = new Piece(topKey, x, 0, patterns[topKey], piecesGrid);
+        boardMatrix[x][7] = new Piece(topKey, x, 7, patterns[botKey], piecesGrid);
+        
+        
+        // the king
+        piece = 'king';
+        topKey = topColor + '_' + piece;
+        botKey = botColor + '_' + piece;
+        
+        x = (inverted ? 3 : 4);
+        boardMatrix[x][0] = new Piece(topKey, x, 0, patterns[topKey], piecesGrid);
+        boardMatrix[x][7] = new Piece(topKey, x, 7, patterns[botKey], piecesGrid);
+        
+        this.emit('ready');
     }
     
     this.drawPieces = function () {
         
+    }
+    
+    this.destroy = function () {
+        boardMatrix = undefined;
+        piecesGrid.destroy();
     }
     
     this.on('piecesLoaded', function () {
