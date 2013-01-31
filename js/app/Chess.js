@@ -66,9 +66,9 @@ function Chess (domRef) {
                     } else if (piece === 'bishop') {
                         x = (i === 0 ? 2 : 5);
                     } else if (piece === 'king') {
-                        x = 3;
+                        x = (color === 'white' ? 3 : 4);
                     } else if (piece === 'queen') {
-                        x = 4;
+                        x = (color === 'white' ? 4 : 3);
                     } else {
                         x = i;
                     }
