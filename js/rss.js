@@ -1,1 +1,0 @@
-/home/sebastian/Projects/rss.js/
