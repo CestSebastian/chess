@@ -1,6 +1,7 @@
 function Chess (domRef) {
     var board       = new Rss.Grid(8, 8, 50, true, 'gray', domRef, 'board'),
         boardCtx    = board.getRssCanvas().getContext2d(),
+        actionBoard = new Rss.Grid(8, 8, 50, true, 'gray', domRef, 'action-board'),
         piecesGrid,
         i, j, boardMatrix,
         self = this;
@@ -52,13 +53,19 @@ function Chess (domRef) {
         
         piecesGrid  = new Rss.Grid(8, 8, 50, false, 'gray', domRef, 'pieces');
         
-        var i, x, piece, topColor, botColor, topKey, botKey;
-        
         boardMatrix = new Array(8);
         
         for (i=0; i<8; i++) {
             boardMatrix[i] = new Array(8);
         }
+        
+        _drawPieces(inverted);
+        
+        this.emit('ready');
+    }
+    
+    function _drawPieces(inverted) {
+        var i, x, piece, topColor, botColor, topKey, botKey;
 
         topColor = (inverted ? 'white' : 'black');
         botColor = (inverted ? 'black' : 'white');
@@ -116,12 +123,18 @@ function Chess (domRef) {
         x = (inverted ? 3 : 4);
         boardMatrix[x][0] = new Piece(topKey, x, 0, patterns[topKey], piecesGrid);
         boardMatrix[x][7] = new Piece(topKey, x, 7, patterns[botKey], piecesGrid);
-        
-        this.emit('ready');
     }
     
-    this.drawPieces = function () {
+    this.selectPiece = function (x, y) {
+        if (!boardMatrix[x] || !boardMatrix[x][y]) {
+            return;
+        }
         
+        this.highlightPosition(x, y);
+    }
+    
+    this.highlightPosition = function (x, y) {
+        actionBoard.fillSquare(x, y, "rgba(70, 70, 200, 0.3)");
     }
     
     this.destroy = function () {

@@ -19,4 +19,4 @@ html[xmlns] .clearfix { display: block; }
 #container { width : 1351px; margin: 0px auto; background-color: #333; }
 
 #container #content #game { text-align: center; position: relative; height: 600px; }
-#container #content #game canvas { position: absolute; left: 100px; top: 0px; }
+#container #content #game canvas { position: absolute; left: 100px; top: 0px; cursor: pointer; }
