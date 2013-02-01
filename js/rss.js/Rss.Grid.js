@@ -1,6 +1,6 @@
 'use strict';
 /*
- * requires Rss.Grid
+ * requires Rss.Canvas
  */
 Rss.Grid = function(x, y, squareSize, hasBorder, borderColor, appendTo, canvasId) {
     this.x = x;
@@ -8,10 +8,10 @@ Rss.Grid = function(x, y, squareSize, hasBorder, borderColor, appendTo, canvasId
     this.squareSize = squareSize;
     this.borderSize = hasBorder ? 1 : 0;
     
-    var rssCanvas = new Rss.Canvas(appendTo, canvasId);
-    
-    var canvasWidth     = x * squareSize + this.borderSize;
-    var canvasHeight    = y * squareSize + this.borderSize;
+    var rssCanvas = new Rss.Canvas(appendTo, canvasId),
+        self = this,
+        canvasWidth     = x * squareSize + this.borderSize,
+        canvasHeight    = y * squareSize + this.borderSize;
 
     rssCanvas.getCanvas().setAttribute('width', canvasWidth);
     rssCanvas.getCanvas().setAttribute('height', canvasHeight);
@@ -61,6 +61,17 @@ Rss.Grid = function(x, y, squareSize, hasBorder, borderColor, appendTo, canvasId
         rssCanvas.destroy();
     }
     
+    this.getRssCanvas().getCanvas().addEventListener('click', function (event) {
+        var x, y;
+        
+        x = Math.floor(event.offsetX / self.squareSize);
+        y = Math.floor(event.offsetY / self.squareSize);
+        
+        self.emit('click', { 'x' : x, 'y' : y});
+    });
+    
     if (hasBorder)
         _makeGrid();
 }
+
+Rss.Grid.prototype = new Rss.EventEmitter();

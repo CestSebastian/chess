@@ -61,6 +61,10 @@ function Chess (domRef) {
         
         _drawPieces(inverted);
         
+        piecesGrid.on('click', function(coords) {
+            _clicked(coords.x, coords.y);
+        });
+        
         this.emit('ready');
     }
     
@@ -125,16 +129,71 @@ function Chess (domRef) {
         boardMatrix[x][7] = new Piece(topKey, x, 7, patterns[botKey], piecesGrid);
     }
     
-    this.selectPiece = function (x, y) {
-        if (!boardMatrix[x] || !boardMatrix[x][y]) {
+    function _clicked (x, y) {
+        if (_selectedPiece) {
+            _moveSelected(x, y);
+        } else if (boardMatrix[x][y]) {
+            self.selectPiece(x, y);
+        }
+    }
+    
+    function _moveSelected (x, y) {
+        var piece = boardMatrix[_selectedPiece.x][_selectedPiece.y];
+        if (!Movement.allowed(piece, x, y, boardMatrix)) {
+            self.unhighlightPosition(_selectedPiece.x, _selectedPiece.y);
+            _selectedPiece = null;
             return;
         }
         
-        this.highlightPosition(x, y);
+        boardMatrix[x][y] = piece;
+        boardMatrix[_selectedPiece.x][_selectedPiece.y] = undefined;
+        self.unhighlightPosition(_selectedPiece.x, _selectedPiece.y);
+        _selectedPiece = null;
+        boardMatrix[x][y].moveTo(x, y);
+    }
+    
+    function _allowed (x, y) {
+        var piece = boardMatrix[_selectedPiece.x][_selectedPiece.y],
+            typeSplit = piece.type.split('_'),
+            color = typeSplit[0],
+            type = typeSplit[1];
+        
+        if (!boardMatrix[x][y]) {
+            
+            return true;
+        } else {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    var _selectedPiece = null;
+    
+    this.selectPiece = function (x, y) {
+        if (!boardMatrix[x][y]) {
+            return;
+        }
+        
+        if (!_selectedPiece) {
+            _selectedPiece = { 'x' : x, 'y' : y };
+            this.highlightPosition(x, y);
+        } else if (_selectedPiece.x === x && _selectedPiece.y === y) {
+            this.unhighlightPosition(x, y);
+            _selectedPiece = null;
+        } else {
+            this.unhighlightPosition(_selectedPiece.x, _selectedPiece.y);
+            _selectedPiece = { 'x' : x, 'y' : y };
+            this.highlightPosition(x, y);
+        }
     }
     
     this.highlightPosition = function (x, y) {
-        actionBoard.fillSquare(x, y, "rgba(70, 70, 200, 0.3)");
+        actionBoard.fillSquare(x, y, "rgba(70, 70, 255, 1)");
+    }
+    
+    this.unhighlightPosition = function (x, y) {
+        actionBoard.clearSquare(x, y);
     }
     
     this.destroy = function () {
@@ -143,7 +202,7 @@ function Chess (domRef) {
     }
     
     this.on('piecesLoaded', function () {
-        self.initBoard();
+        this.initBoard();
     });
     
     _loadPatterns();
