@@ -65,6 +65,14 @@ function Chess (domRef) {
             _clicked(coords.x, coords.y);
         });
         
+        piecesGrid.on('mousedown', function(coords) {
+            _mousedown(coords.x, coords.y);
+        });
+        
+        piecesGrid.on('mouseup', function(coords) {
+            _mouseup(coords.x, coords.y);
+        });
+        
         this.emit('ready');
     }
     
@@ -135,6 +143,14 @@ function Chess (domRef) {
         } else if (boardMatrix[x][y]) {
             self.selectPiece(x, y);
         }
+    }
+    
+    function _mousedown (x, y) {
+        
+    }
+    
+    function _mouseup (x, y) {
+        
     }
     
     function _moveSelected (x, y) {

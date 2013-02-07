@@ -70,6 +70,24 @@ Rss.Grid = function(x, y, squareSize, hasBorder, borderColor, appendTo, canvasId
         self.emit('click', { 'x' : x, 'y' : y});
     });
     
+    this.getRssCanvas().getCanvas().addEventListener('mousedown', function (event) {
+        var x, y;
+        
+        x = Math.floor(event.offsetX / self.squareSize);
+        y = Math.floor(event.offsetY / self.squareSize);
+        
+        self.emit('mousedown', { 'x' : x, 'y' : y});
+    });
+    
+    this.getRssCanvas().getCanvas().addEventListener('mouseup', function (event) {
+        var x, y;
+        
+        x = Math.floor(event.offsetX / self.squareSize);
+        y = Math.floor(event.offsetY / self.squareSize);
+        
+        self.emit('mouseup', { 'x' : x, 'y' : y});
+    });
+    
     if (hasBorder)
         _makeGrid();
 }
